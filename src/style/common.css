@@ -1,4 +1,4 @@
-.h-yueEllipsis {
+.z-yueEllipsis {
   display: inline-block;
   width: 100%;
   vertical-align: bottom;
@@ -6,10 +6,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.h-yueEllipsis.display-block {
+.z-yueEllipsis.display-block {
   display: block;
 }
-.h-yueEllipsis.non-full {
+.z-yueEllipsis.no-full {
   width: auto;
   max-width: 100%;
 }

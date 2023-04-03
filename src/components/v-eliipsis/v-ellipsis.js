@@ -47,10 +47,10 @@ const removeClass = function removeClass(el, cls) {
   }
 };
 const updateCls = (el, binding) => {
-  addClass(el, "h-yueEllipsis");
+  addClass(el, "z-yueEllipsis");
   // 处理修饰符
   binding.modifiers.block ? addClass(el, "display-block") : removeClass(el, "display-block");
-  binding.modifiers.nonFull ? addClass(el, "non-full") : removeClass(el, "non-full");
+  binding.modifiers.nonFull ? addClass(el, "no-full") : removeClass(el, "no-full");
 };
 
 const hover = (e) => {
@@ -66,7 +66,7 @@ export default {
     updateCls(el, binding);
   },
   unbind(el) {
-    removeClass(el, "h-ellipsis display-block non-full");
+    removeClass(el, "z-ellipsis display-block no-full");
     el.removeEventListener("mouseenter", hover);
   },
 };
