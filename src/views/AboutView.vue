@@ -1,5 +1,15 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <zyEllipsis></zyEllipsis>
   </div>
 </template>
+
+<script>
+import zyEllipsis from "@/components/zy-ellipsis.vue";
+
+export default {
+  components: {
+    zyEllipsis,
+  },
+};
+</script>
