@@ -13,3 +13,4 @@ npm run serve
 ```
 
 组件一：v-zyellipsis
+组件二：v-clickoutside

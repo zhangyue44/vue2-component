@@ -1,15 +1,18 @@
 <template>
   <div class="about">
-    <zyEllipsis></zyEllipsis>
+    <!-- <zyEllipsis></zyEllipsis> -->
+    <zyClickoutside></zyClickoutside>
   </div>
 </template>
 
 <script>
-import zyEllipsis from "@/components/zy-ellipsis.vue";
+// import zyEllipsis from "@/components/zy-ellipsis.vue";
+import zyClickoutside from "@/components/zy-clickoutside.vue";
 
 export default {
   components: {
-    zyEllipsis,
+    // zyEllipsis,
+    zyClickoutside,
   },
 };
 </script>
