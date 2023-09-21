@@ -1,18 +1,21 @@
 <template>
-  <div class="about">
-    <!-- <zyEllipsis></zyEllipsis> -->
-    <zyClickoutside></zyClickoutside>
+  <div class="about w-full h-full">
+    <!-- <Tellipsis></Tellipsis> -->
+    <!-- <Tclickoutside></Tclickoutside> -->
+    <Tlazy></Tlazy>
   </div>
 </template>
 
 <script>
-// import zyEllipsis from "@/components/zy-ellipsis.vue";
-import zyClickoutside from "@/components/zy-clickoutside.vue";
+// import Tellipsis from '@/components/T-directive-ellpisis.vue';
+// import Tclickoutside from '@/components/T-directive-clickoutside.vue';
+import Tlazy from "@/components/T-directive-lazy.vue";
 
 export default {
   components: {
-    // zyEllipsis,
-    zyClickoutside,
+    // Tellipsis,
+    // Tclickoutside,
+    Tlazy,
   },
 };
 </script>
