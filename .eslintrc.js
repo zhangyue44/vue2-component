@@ -27,5 +27,6 @@ module.exports = {
     "object-curly-newline": "off",
     "operator-linebreak": "off",
     "import/order": "off",
+    "import/no-extraneous-dependencies": "off",
   },
 };
