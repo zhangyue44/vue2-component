@@ -28,5 +28,6 @@ module.exports = {
     "operator-linebreak": "off",
     "import/order": "off",
     "import/no-extraneous-dependencies": "off",
+    "vue/multi-word-component-names": "off",
   },
 };
