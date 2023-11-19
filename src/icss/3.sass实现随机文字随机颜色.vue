@@ -5,9 +5,9 @@
 </template>
 
 <style scoped lang="scss">
-@use "sass:string";
+@use "sass:string"; // 必须先引入才能使用
 $str: "QWERTYUIOPASDFGHJKLZXCVBNMabcdefghigklmnopqrstuvwxyz123456789";
-$length: str-length($str);
+$length: str-length($str); // str的长度
 $size: 24;
 $count: 41;
 @function randomColor() {
@@ -16,7 +16,9 @@ $count: 41;
 @function randomLinear($count) {
   $value: "";
   @for $i from 0 through ($count - 1) {
-    $value: $value + randomColor() + string.unquote(" 0 #{$i * 32}px,");
+    $value: $value +
+      randomColor() +
+      string.unquote(" 0 #{$i * 32}px,"); // unquote:去除字符串的双引号
   }
   @return linear-gradient(string.unquote(#{$value}) randomColor() 0 100%);
 }
