@@ -11,9 +11,6 @@ import chalk from "chalk";
 export default {
   created() {
     console.log(chalk.blue("App created"));
-    EventBus.$on("test", (params1, params2) => {
-      console.log(params1, params2);
-    });
   },
 };
 </script>
