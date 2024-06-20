@@ -96,7 +96,12 @@ export default {
         this.minDate = new Date(arr[0]);
         this.startCurrentTime = arr[0];
         this.startDay = arr[1];
-        if (this.minDate.getTime() > new Date(this.currentTime).getTime()) {
+        if (
+          this.minDate.getTime() > new Date(this.currentTime).getTime() ||
+          (this.minDate.getTime() === new Date(this.currentTime).getTime() &&
+            this.startDay === "下午" &&
+            this.currentDay === "上午")
+        ) {
           this.defaultDate = this.minDate;
           this.currentTime = this.startCurrentTime;
           this.currentDay = "上午";
@@ -141,14 +146,13 @@ export default {
       this.currentDay = val;
       this.$emit("input", `${this.currentTime} ${this.currentDay}`);
       if (this.timeType === "end") {
-        let day = Math.max(
-          1,
+        let day =
           (new Date(this.currentTime).getTime() - new Date(this.startCurrentTime).getTime()) /
             1000 /
             60 /
             60 /
-            24
-        );
+            24 +
+          1;
         if (this.startDay === "下午") day -= 0.5;
         if (this.currentDay === "上午") day -= 0.5;
         this.$emit("update:leaveDuring", day);
