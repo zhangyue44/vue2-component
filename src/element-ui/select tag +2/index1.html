@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      body {
+        margin-top: 100px;
+        text-align: -webkit-center;
+      }
+      .a {
+        width: 240px;
+        line-height: 32px;
+        height: 32px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        text-align: left;
+        padding: 0 4px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .b {
+        margin-top: 24px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="a"></div>
+    <div class="b">
+      <div onClick="bClick('哈哈哈啊哈哈哈哈')">哈哈哈</div>
+      <div onClick="bClick('我去啊大大')">我去</div>
+      <div onClick="bClick('牛')">牛</div>
+      <div onClick="bClick('牛大了哥是否是否是2')">牛大了哥</div>
+    </div>
+    <script>
+      const a = document.querySelector(".a");
+      let arr = [];
+      let c;
+      function bClick(val) {
+        const index = arr.findIndex((v) => v === val);
+        if (index !== -1) {
+          arr.splice(index, 1);
+        } else {
+          arr.push(val);
+        }
+        if (!c) {
+          c = a.cloneNode(true);
+          c.style.width = "fit-content";
+          c.style.position = "absolute";
+          c.style.zIndex = "-1";
+          c.style.opacity = 0;
+          document.body.appendChild(c);
+        }
+        c.textContent = "";
+        let num = 0;
+        for (let i = 0; i < arr.length; i++) {
+          if (!num) c.textContent += arr[i];
+          if (!num && a.clientWidth - c.clientWidth < 20) {
+            c.textContent = c.textContent.split(arr[i])[0];
+            num++;
+          } else if (num) {
+            num++;
+          }
+        }
+        c.textContent += num ? ` +${num}` : "";
+        a.textContent = c.textContent;
+      }
+    </script>
+  </body>
+</html>
