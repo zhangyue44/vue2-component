@@ -2,12 +2,19 @@
   <div v-loading="loading" class="chart-common">
     <div ref="chart" class="chart-common-chart" />
     <div class="x-legend">
-      <el-date-picker v-model="value1" type="date" placeholder="请选择日期" :clearable="false" />
-      <el-button slot="reference" class="btn-add"
+      <el-date-picker
+        v-show="arrList.length < 5"
+        v-model="value1"
+        type="date"
+        placeholder="请选择日期"
+        :clearable="false"
+        :picker-options="pickerBeginDateAfter"
+      />
+      <el-button v-show="arrList.length < 5" slot="reference" class="btn-add"
         ><span style="cursor: pointer">+ 新增对比</span></el-button
       >
       <div v-for="(item, index) in arrList" :key="item.time" class="item">
-        <div class="line" :style="{ background: options.color[index] }"></div>
+        <div class="line" :style="{ background: options.color[arrList.length - index - 1] }"></div>
         <span>{{ item.label }}</span>
         <span v-if="item.close" class="close" @click="handleClose(item.time, false)">Χ</span>
       </div>
@@ -30,6 +37,14 @@ export default {
   },
   data() {
     return {
+      pickerBeginDateAfter: {
+        disabledDate(time) {
+          return (
+            time.getTime() >=
+            new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 1)
+          );
+        },
+      },
       loading: false,
       value1: new Date(),
       arrList: [],
@@ -53,7 +68,7 @@ export default {
           trigger: "axis",
           formatter: (params) => {
             const { id } = this.activeTab;
-            let res = `<div style="display:flex;justify-content:space-between;min-width:180px">
+            let res = `<div style="display:flex;justify-content:space-between;min-width:200px">
                 <span>${this.activeTab.label}</span>
               </div>`;
             for (let i = 0; i < params.length; i++) {
@@ -80,6 +95,7 @@ export default {
           boundaryGap: true,
           type: "category",
           data: [
+            "0:00",
             "1:00",
             "2:00",
             "3:00",
@@ -103,7 +119,6 @@ export default {
             "21:00",
             "22:00",
             "23:00",
-            "24:00",
           ],
           axisLine: {
             lineStyle: {
@@ -135,6 +150,7 @@ export default {
               textStyle: {
                 fontSize: 14,
               },
+              formatter: "{value}",
             },
             axisLine: {
               show: true,
@@ -200,6 +216,7 @@ export default {
     },
     getVeCapture(time) {
       this.loading = true;
+      const today = this.$moment(new Date()).format("YYYY-MM-DD");
       const quest = this.menuType.startsWith("tim")
         ? this.$api.vehicleAlarmCapturedata
         : this.menuType.startsWith("face")
@@ -214,6 +231,7 @@ export default {
           endDate: time,
           resourceType: this.resType,
           resIndexCode: this.indexCode,
+          currentHour: today === time ? new Date().getHours() : 24,
           timeLevel: "2", // 1 日期 2 小时
         },
       })
@@ -244,7 +262,7 @@ export default {
                       silent: true,
                       data: [
                         {
-                          yAxis: this.configData[this.activeTab.yu],
+                          yAxis: this.configData[this.activeTab.yu] || 0,
                           label: {
                             formatter: "阈值{c}%",
                             color: "rgba(0, 0, 0, 0.5)",
@@ -260,6 +278,8 @@ export default {
                     },
             },
           ];
+          this.options.yAxis[0].axisLabel.formatter =
+            this.activeTab.id === "captureData" ? "{value}" : "{value}%";
           this.options.series.push(...arr);
           this.lineChart.setOption(this.options, true);
         })

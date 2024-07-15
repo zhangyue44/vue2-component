@@ -79,11 +79,16 @@ export default {
             const val2 = val[1];
             const val3 = val[2];
             const { id, add } = this.activeTab;
-            let res = `<div style="display:flex;justify-content:space-between;min-width:140px">
+            const isHasCompare = this.selectMap[params[0].data.mergeDate];
+            let res = `<div style="display:flex;justify-content:space-between;min-width:180px">
                 <span>${["plate"].includes(id) ? params[0].name : params[0].seriesName}</span>
                 ${
                   add
-                    ? `<div style="color:#2080f7;cursor:pointer;" onclick="_chartClick(${val1}, ${val2}, ${val3})">+对比</div>`
+                    ? `<div style="color:${
+                        isHasCompare ? "rgb(224, 224, 224)" : "#2080f7"
+                      };cursor:${
+                        isHasCompare ? "not-allowed" : "pointer"
+                      };" onclick="_chartClick(${val1}, ${val2}, ${val3})">+对比</div>`
                     : ""
                 }
               </div>`;
@@ -92,7 +97,7 @@ export default {
                 <span>${params[i].marker}${
                 ["plate"].includes(id) ? params[i].seriesName : params[i].name
               }</span>
-                <span style="font-weight:bold;">${params[i].data.value}${
+                <span style="font-weight:bold;">${params[i].data.value || "0"}${
                 ["captureData"].includes(id) ? "" : "%"
               }</span>
               </div>`;
@@ -117,11 +122,13 @@ export default {
               res += '<div style="height:1px;background:rgba(0,0,0,0.1);margin: 8px 0"></div>';
               res += `<div style="display:flex;justify-content:space-between;margin-bottom:6px">
                   <span style="color:rgba(0,0,0,0.5)">${this.activeTab.title1}</span>
-                  <span style="font-weight:bold;">${params[0].data.totalNum}</span>
+                  <span style="font-weight:bold;">${params[0].data.totalNum || "0"}</span>
                 </div>`;
               res += `<div style="display:flex;justify-content:space-between;">
                   <span style="color:rgba(0,0,0,0.5)">${this.activeTab.title2}</span>
-                  <span style="font-weight:bold;color:#E6202A">${params[0].data.failedNum}</span>
+                  <span style="font-weight:bold;color:#E6202A;margin-left:8px">${
+                    params[0].data.failedNum || "0"
+                  }</span>
                 </div>`;
             }
             return res;
@@ -168,6 +175,7 @@ export default {
               textStyle: {
                 fontSize: 14,
               },
+              formatter: "{value}",
             },
             axisLine: {
               show: true,
@@ -232,11 +240,11 @@ export default {
     if (this.resize) {
       window.addEventListener("resize", this.updateChart);
     }
-    const nowTime = new Date();
+    const nowTime = new Date(this.endTime);
     const year = nowTime.getFullYear();
     const day = nowTime.getDate() > 30 ? 30 : nowTime.getDate();
     const lastday = 30 - day <= 0 ? 0 : 30 - day;
-    const a = new Date();
+    const a = new Date(this.endTime);
     a.setDate(0);
     const lasttime = a.getDate();
     const lastMonth = a.getMonth() + 1;
@@ -295,6 +303,7 @@ export default {
           endDate: this.endTime,
           resourceType: this.resType,
           resIndexCode: this.indexCode,
+          currentHour: new Date().getHours(),
           timeLevel: "1", // 1 日期 2 小时
         },
       })
@@ -350,10 +359,7 @@ export default {
             arr.push({
               name: "白天车牌识别率",
               type: "line",
-              data: this.chartData.map((v) => {
-                v.value = v.dayRate;
-                return v;
-              }),
+              data: this.chartData.map((v) => v.dayRate),
               areaStyle: {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                   {
@@ -370,10 +376,7 @@ export default {
             arr.push({
               name: "夜晚车牌识别率",
               type: "line",
-              data: this.chartData.map((v) => {
-                v.value = v.nightRate;
-                return v;
-              }),
+              data: this.chartData.map((v) => v.nightRate),
               areaStyle: {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                   {
@@ -388,6 +391,8 @@ export default {
               },
             });
           }
+          this.options.yAxis[0].axisLabel.formatter =
+            this.activeTab.id === "captureData" ? "{value}" : "{value}%";
           this.options.series = arr;
           this.lineChart.setOption(this.options, true);
         })
@@ -395,6 +400,8 @@ export default {
           this.loading = false;
           this.chartData = [];
           this.options.series = [];
+          this.options.yAxis[0].axisLabel.formatter =
+            this.activeTab.id === "captureData" ? "{value}" : "{value}%";
           this.lineChart.setOption(this.options, true);
         });
     },
@@ -405,6 +412,7 @@ export default {
         return;
       }
       const value = this.handleClose(time);
+      if (value === "refused") return;
       this.$emit("updateHourLine", {
         time,
         show: value,
@@ -415,11 +423,15 @@ export default {
         2,
         "0"
       )}`;
+      if (this.selectMap[time]) {
+        return;
+      }
       if (time === this.endTime) {
         this.$message.warning("今日时段不可删除");
         return;
       }
       const value = this.handleClose(time);
+      if (value === "refused") return;
       this.$emit("updateHourLine", {
         time,
         show: value,
@@ -427,6 +439,13 @@ export default {
     }, 200),
     handleClose(time) {
       const value = !this.selectMap[time];
+      if (value) {
+        const num = Object.keys(this.selectMap).length;
+        if (num >= 5) {
+          this.$message.warning("最多只支持添加5个日期进行对比");
+          return "refused";
+        }
+      }
       this.$set(this.selectMap, time, value);
       if (!value) delete this.selectMap[time];
       return value;
