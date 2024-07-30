@@ -1,3 +1,20 @@
+<!-- <div class="pull-list">
+  <recordPullList
+    ref="recordlist"
+    :reason="reason"
+    :listType="listType"
+    :type="type"
+    :sort="sort"
+    :showTotal.sync="showTotal"
+  />
+</div>
+
+pull-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+} -->
+
 <template>
   <div>
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
