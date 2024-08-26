@@ -8,7 +8,7 @@ export default {
     return {
       unitFormRules: {
         idList: {
-          type: "Array",
+          type: "array",
           required: true,
           validator: (rule, value, callback) => {
             if (!this.unitFormData.idList?.length) {
@@ -17,12 +17,12 @@ export default {
             }
             callback();
           },
-          trigger: "change",
+          trigger: ["blur", "change"],
         },
       },
       roleIds: [
         {
-          type: "Array",
+          type: "array",
           required: true,
           validator: (rule, value, callback) => {
             if (!this.memberForm.roleIds?.length) {
